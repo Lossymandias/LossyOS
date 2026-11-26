@@ -18,11 +18,6 @@ class winBar{
         let s  =zip([this._BarWinP.getRect(), [0.5,0.5,0, - this._BarWinP.getRect()[3] + gAttrVisStyle["BASE"].winBarHeight]]).map(t=> t[0] + t[1]);
         ctx.fillStyle = gAttrVisStyle["BASE"].winBarBkd;
         ctx.fillRect(...s);
-        
-    
-        //ctx.strokeStyle = gAttrVisStyle["BASE"].winBorBkd;
-        //ctx.lineWidth = 1;
-        //ctx.strokeRect(...s);
 
         const orRender = function (ctx, t, dst) {
             ctx.strokeStyle = gAttrVisStyle["BASE"].winBkd;
@@ -56,8 +51,6 @@ class winBar{
         orRender(ctx, sBoxChangeSpace,0);
         orRender(ctx, sBoxChangeSpace,gAttrVisStyle["BASE"].winBorSpace);
         
-
-
         ctx.fillStyle = "White";
         drawBitmapText(ctx, this._BarTitle, ...zip([this._BarWinP.getRect().slice(0,2),[0,+gAttrVisStyle["BASE"].winBarHeight - 10]]).map(t => t[0] + t[1]), 1, "#ffffff");
 
@@ -66,7 +59,6 @@ class winBar{
     grabIsMouseInside(mPos){
         let s  = zip([this._BarWinP.getRect(), [0.5,0.5,0, - this._BarWinP.getRect()[3] + gAttrVisStyle["BASE"].winBarHeight]]).map(t=> t[0] + t[1]);
         return inside(mPos, s);
-        //return mPos[0] > s[0] && mPos[0] < s[0] + s[2] && mPos[1] > s[1] && mPos[1] < s[1] + s[3];
     }
 
     grabIsMouseInsideButtons(mPos){
@@ -81,7 +73,6 @@ class winBar{
             - this._BarWinP.getRect()[2] + gAttrVisStyle["BASE"].winBarHeight, - this._BarWinP.getRect()[3] + gAttrVisStyle["BASE"].winBarHeight]]).map(t=> t[0] + t[1]);
         
         return inside(mPos, sBoxClose) ? 1 : inside(mPos, sBoxChangeSpace) ? 2 : 0;
-       
     }
 
     grabContext(mPos, parent){}
@@ -93,11 +84,10 @@ const sum = a => a.reduce((acc, val) => acc + (Number(val) || 0), 0);
 class EX_winR{
     constructor(sstrdId, title, strSize, strPos, runContent, strState) {
         this._RWinP = new EX_winP(
-            [strPos[0]*getSizeCanvas()[0],strPos[1]*getSizeCanvas()[1]], 
+            [Math.floor(strPos[0]*getSizeCanvas()[0]),Math.floor(strPos[1]*getSizeCanvas()[1])], 
             strSize);
         
         this._RWinEx = winFactoryEx(runContent, this._RWinP);
-        //this._RWinEx = new EXP_wEMain(this._RWinP); //DEBUG, REMOVE LATER
 
         this._RTitle = title;
         this._RWinBar = new winBar(title, this._RWinP);
@@ -118,9 +108,6 @@ class EX_winR{
     draw(ctx){
         if(!this._RAttrOnUpdate)
             return;
-
-        //this._RAttrOnUpdate = false;
-
         const brRender = function (ctx) {
             ctx.fillStyle = gAttrVisStyle["BASE"].winBkd;
             ctx.fillRect(...this._RWinP.getRect());
@@ -165,17 +152,16 @@ class EX_winR{
         if(this._ROnDrag){
             this._RWinP.setPos([mPos[0] + this._ROnOffset[0],mPos[1] + this._ROnOffset[1]]);
             this._RAttrOnUpdate = true;
-
         }
 
         const mrPos = this._RWinP.getRelMouse(mPos);
         this._RWinBar.grabContext(mrPos, this);
-
         return focused;
     }
     getRequiredAction(){return this._RRequiredAction;}
     clearRequiredAction(){ this._RRequiredAction = 0;}
 }
+
 const pDate = new Intl.DateTimeFormat('en-US', {
     weekday : 'short',
     month : 'short',
@@ -229,9 +215,7 @@ class winBBarIcons{
 
 class winBBar{
 
-    constructor(){
-        this._BBIcons = [];
-    }
+    constructor(){ this._BBIcons = []; }
 
     addWin(win){
         const padX = 4;
@@ -261,10 +245,7 @@ class winBBar{
         let gap = 4;
         let cursor = 0;
 
-        this._BBIcons.forEach((g) => {
-            const w = g.draw(ctx, cursor);
-            cursor += w + gap;
-        });
+        this._BBIcons.forEach((g) => {cursor += g.draw(ctx, cursor) + gap;});
         
     }
 
@@ -280,7 +261,7 @@ class EX_winM{
     }
 
     addWin(winR){
-        this._RWinRender.push(winR.getIsRendered()); //MAKE IT BE FALSE FOR SOME
+        this._RWinRender.push(winR.getIsRendered());
         this._RWinOrder.push(this._RWinOrder.length);
         this._RWins.push(winR);
         this._RBottomBar.addWin(winR);

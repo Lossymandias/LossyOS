@@ -172,7 +172,6 @@ Research in Informatics (MIRI) at UPC. `,1,"#666666"),[0,-5]),
                     ],0.2),
                 ],0.35)
             ],0.15)
-            //new ordText("HELLO \nYERP",2,"#000000")
             ,[2,2]));
     }
 
